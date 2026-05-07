@@ -5,40 +5,36 @@
 
 model:
   model_config:
-    class_path: rfdetr.config.RFDETRNanoConfig
-    init_args:
-      encoder: dinov2_windowed_small
-      out_feature_indexes: [3, 6, 9, 12]
-      dec_layers: 2
-      two_stage: true
-      projector_scale: [P4]
-      hidden_dim: 256
-      patch_size: 16
-      num_windows: 2
-      sa_nheads: 8
-      ca_nheads: 16
-      dec_n_points: 2
-      resolution: 384
-      positional_encoding_size: 24
-      pretrain_weights: rf-detr-nano.pth
-      num_classes: 10
+    encoder: dinov2_windowed_small
+    out_feature_indexes: [3, 6, 9, 12]
+    dec_layers: 2
+    two_stage: true
+    projector_scale: [P4]
+    hidden_dim: 256
+    patch_size: 16
+    num_windows: 2
+    sa_nheads: 8
+    ca_nheads: 16
+    dec_n_points: 2
+    resolution: 384
+    positional_encoding_size: 24
+    pretrain_weights: rf-detr-nano.pth
+    num_classes: 10
   train_config:
-    class_path: rfdetr.config.TrainConfig
-    init_args:
-      dataset_file: roboflow
-      dataset_dir: data/visdrone_rfdetr
-      output_dir: output/visdrone_nano
-      project: visdrone
-      run: rfdetr_nano_baseline
-      epochs: 100
-      batch_size: 8
-      grad_accum_steps: 1
-      num_workers: 4
-      tensorboard: true
-      wandb: false
-      mlflow: false
-      use_ema: true
-      multi_scale: true
-      eval_interval: 1
-      checkpoint_interval: 5
-      run_test: false
+    dataset_file: roboflow
+    dataset_dir: data/visdrone_rfdetr
+    output_dir: output/visdrone_nano
+    project: visdrone
+    run: rfdetr_nano_baseline
+    epochs: 100
+    batch_size: 8
+    grad_accum_steps: 1
+    num_workers: 4
+    tensorboard: true
+    wandb: false
+    mlflow: false
+    use_ema: true
+    multi_scale: true
+    eval_interval: 1
+    checkpoint_interval: 5
+    run_test: false

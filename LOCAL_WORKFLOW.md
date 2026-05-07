@@ -329,7 +329,10 @@ python scripts/smoke_visdrone_pipeline.py \
 
 - 当前服务器这套 `LightningCLI + Pydantic` 组合对 `RFDETRNanoConfig` / `RFDETRSmallConfig`
   的默认字段自动补全不稳定
-- 因此配置文件中已经显式写全关键模型字段，避免出现 `encoder=None` 之类的解析错误
+- 同时 `rfdetr fit --config` 对这两个嵌套配置更稳的写法是“直接字段展开”，
+  而不是继续套 `class_path / init_args`
+- 因此配置文件中已经改成直接字段形式，并显式写全关键模型字段，
+  避免出现 `encoder=None` 之类的解析错误
 
 ### 第一版正式训练命令
 
