@@ -299,6 +299,93 @@ python scripts/smoke_visdrone_pipeline.py \
   --batch-size 1
 ```
 
+## 正式训练基线
+
+### 推荐顺序
+
+建议先跑：
+
+1. `RF-DETR Nano` 基线
+2. `RF-DETR Small` 对比基线
+
+原因：
+
+- `Nano` 更稳，更快出第一版结果
+- `Small` 更适合后续作为论文中的更强基线
+- 先用 `Nano` 验证完整训练流程，比直接上更大的模型更省时间
+
+### 新增配置文件
+
+- `configs/rfdetr_visdrone_nano.yaml`
+- `configs/rfdetr_visdrone_small.yaml`
+
+两份配置都默认使用：
+
+- `num_classes: 10`
+- `dataset_file: roboflow`
+- `dataset_dir: data/visdrone_rfdetr`
+
+### 第一版正式训练命令
+
+先跑 `Nano`：
+
+```bash
+rfdetr fit --config configs/rfdetr_visdrone_nano.yaml
+```
+
+如果你更想直接跑 `Small`：
+
+```bash
+rfdetr fit --config configs/rfdetr_visdrone_small.yaml
+```
+
+### 常用训练过程命令
+
+查看最新 checkpoint：
+
+```bash
+ls output/visdrone_nano
+```
+
+从上次中断处继续训练：
+
+```bash
+rfdetr fit \
+  --config configs/rfdetr_visdrone_nano.yaml \
+  --ckpt_path output/visdrone_nano/last.ckpt
+```
+
+用已有 checkpoint 做验证：
+
+```bash
+rfdetr validate \
+  --config configs/rfdetr_visdrone_nano.yaml \
+  --ckpt_path output/visdrone_nano/last.ckpt
+```
+
+### 关于 WanLab
+
+当前代码显式支持的是 `TensorBoard` / `WandB` / `MLflow`。
+
+因此建议现阶段先这样处理：
+
+1. 先按当前配置跑通正式训练
+2. 如果你的 `WanLab` 支持兼容 `wandb`，再把配置中的：
+
+```yaml
+wandb: false
+```
+
+改成：
+
+```yaml
+wandb: true
+```
+
+并补上对应的运行环境配置
+
+在没有确认 `WanLab` 接入方式之前，不建议现在就把日志链路绑死到 `wandb=true`。
+
 ## Git 约定
 
 - `git add` 时必须避免把数据集、大权重、训练输出带进版本库。

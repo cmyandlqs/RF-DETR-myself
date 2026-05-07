@@ -1,0 +1,30 @@
+# RF-DETR Small on VisDrone — second baseline / stronger comparison configuration.
+# Usage:
+#   rfdetr fit --config configs/rfdetr_visdrone_small.yaml
+#   rfdetr validate --config configs/rfdetr_visdrone_small.yaml --ckpt_path output/visdrone_small/last.ckpt
+
+model:
+  model_config:
+    class_path: rfdetr.config.RFDETRSmallConfig
+    init_args:
+      num_classes: 10
+  train_config:
+    class_path: rfdetr.config.TrainConfig
+    init_args:
+      dataset_file: roboflow
+      dataset_dir: data/visdrone_rfdetr
+      output_dir: output/visdrone_small
+      project: visdrone
+      run: rfdetr_small_baseline
+      epochs: 100
+      batch_size: 6
+      grad_accum_steps: 1
+      num_workers: 4
+      tensorboard: true
+      wandb: false
+      mlflow: false
+      use_ema: true
+      multi_scale: true
+      eval_interval: 1
+      checkpoint_interval: 5
+      run_test: false

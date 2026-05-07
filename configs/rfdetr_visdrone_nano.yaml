@@ -1,0 +1,30 @@
+# RF-DETR Nano on VisDrone — first baseline configuration.
+# Usage:
+#   rfdetr fit --config configs/rfdetr_visdrone_nano.yaml
+#   rfdetr validate --config configs/rfdetr_visdrone_nano.yaml --ckpt_path output/visdrone_nano/last.ckpt
+
+model:
+  model_config:
+    class_path: rfdetr.config.RFDETRNanoConfig
+    init_args:
+      num_classes: 10
+  train_config:
+    class_path: rfdetr.config.TrainConfig
+    init_args:
+      dataset_file: roboflow
+      dataset_dir: data/visdrone_rfdetr
+      output_dir: output/visdrone_nano
+      project: visdrone
+      run: rfdetr_nano_baseline
+      epochs: 100
+      batch_size: 8
+      grad_accum_steps: 1
+      num_workers: 4
+      tensorboard: true
+      wandb: false
+      mlflow: false
+      use_ema: true
+      multi_scale: true
+      eval_interval: 1
+      checkpoint_interval: 5
+      run_test: false
