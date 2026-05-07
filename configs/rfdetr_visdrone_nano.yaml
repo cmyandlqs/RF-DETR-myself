@@ -7,6 +7,20 @@ model:
   model_config:
     class_path: rfdetr.config.RFDETRNanoConfig
     init_args:
+      encoder: dinov2_windowed_small
+      out_feature_indexes: [3, 6, 9, 12]
+      dec_layers: 2
+      two_stage: true
+      projector_scale: [P4]
+      hidden_dim: 256
+      patch_size: 16
+      num_windows: 2
+      sa_nheads: 8
+      ca_nheads: 16
+      dec_n_points: 2
+      resolution: 384
+      positional_encoding_size: 24
+      pretrain_weights: rf-detr-nano.pth
       num_classes: 10
   train_config:
     class_path: rfdetr.config.TrainConfig

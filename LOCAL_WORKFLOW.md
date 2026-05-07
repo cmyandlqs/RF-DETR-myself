@@ -325,6 +325,12 @@ python scripts/smoke_visdrone_pipeline.py \
 - `dataset_file: roboflow`
 - `dataset_dir: data/visdrone_rfdetr`
 
+说明：
+
+- 当前服务器这套 `LightningCLI + Pydantic` 组合对 `RFDETRNanoConfig` / `RFDETRSmallConfig`
+  的默认字段自动补全不稳定
+- 因此配置文件中已经显式写全关键模型字段，避免出现 `encoder=None` 之类的解析错误
+
 ### 第一版正式训练命令
 
 先跑 `Nano`：
