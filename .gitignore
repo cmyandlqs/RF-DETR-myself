@@ -191,6 +191,10 @@ data/
 datasets/
 visdrone/
 !visdrone/.gitkeep
+!src/rfdetr/datasets/
+!src/rfdetr/datasets/**
+!tests/datasets/
+!tests/datasets/**
 
 # local large files and training artifacts
 *.pth
