@@ -319,7 +319,7 @@ python scripts/smoke_visdrone_pipeline.py \
 - `configs/rfdetr_visdrone_nano.yaml`
 - `configs/rfdetr_visdrone_small.yaml`
 
-两份配置都默认使用：
+两份配置保留为参数参考，默认使用：
 
 - `num_classes: 10`
 - `dataset_file: roboflow`
@@ -331,21 +331,56 @@ python scripts/smoke_visdrone_pipeline.py \
   的默认字段自动补全不稳定
 - 同时 `rfdetr fit --config` 对这两个嵌套配置更稳的写法是“直接字段展开”，
   而不是继续套 `class_path / init_args`
-- 因此配置文件中已经改成直接字段形式，并显式写全关键模型字段，
-  避免出现 `encoder=None` 之类的解析错误
+- 实际验证中，`rfdetr fit --config ...` 仍会被 `link_arguments` 映射成
+  `data.model_config.*` 相关解析错误
+- 因此当前正式训练不再依赖 `rfdetr fit --config`，而是改用单独脚本绕开
+  `LightningCLI`
+
+### 正式训练入口脚本
+
+新增脚本：
+
+- `scripts/run_visdrone_baseline.py`
+
+用途：
+
+- 直接构造 `RFDETRNanoConfig` / `RFDETRSmallConfig`
+- 直接构造 `TrainConfig`
+- 直接调用 `RFDETRModelModule + RFDETRDataModule + build_trainer`
+- 绕过当前服务器上不稳定的 `LightningCLI` 配置解析
 
 ### 第一版正式训练命令
 
 先跑 `Nano`：
 
 ```bash
-rfdetr fit --config configs/rfdetr_visdrone_nano.yaml
+python scripts/run_visdrone_baseline.py fit \
+  --variant nano \
+  --dataset-dir data/visdrone_rfdetr \
+  --output-dir output/visdrone_nano
 ```
 
 如果你更想直接跑 `Small`：
 
 ```bash
-rfdetr fit --config configs/rfdetr_visdrone_small.yaml
+python scripts/run_visdrone_baseline.py fit \
+  --variant small \
+  --dataset-dir data/visdrone_rfdetr \
+  --output-dir output/visdrone_small
+```
+
+可选常用参数：
+
+```bash
+python scripts/run_visdrone_baseline.py fit \
+  --variant nano \
+  --dataset-dir data/visdrone_rfdetr \
+  --output-dir output/visdrone_nano \
+  --epochs 100 \
+  --batch-size 8 \
+  --num-workers 4 \
+  --tensorboard \
+  --no-wandb
 ```
 
 ### 常用训练过程命令
@@ -359,17 +394,31 @@ ls output/visdrone_nano
 从上次中断处继续训练：
 
 ```bash
-rfdetr fit \
-  --config configs/rfdetr_visdrone_nano.yaml \
-  --ckpt_path output/visdrone_nano/last.ckpt
+python scripts/run_visdrone_baseline.py fit \
+  --variant nano \
+  --dataset-dir data/visdrone_rfdetr \
+  --output-dir output/visdrone_nano \
+  --resume output/visdrone_nano/last.ckpt
 ```
 
 用已有 checkpoint 做验证：
 
 ```bash
-rfdetr validate \
-  --config configs/rfdetr_visdrone_nano.yaml \
-  --ckpt_path output/visdrone_nano/last.ckpt
+python scripts/run_visdrone_baseline.py validate \
+  --variant nano \
+  --dataset-dir data/visdrone_rfdetr \
+  --output-dir output/visdrone_nano \
+  --ckpt-path output/visdrone_nano/last.ckpt
+```
+
+用已有 checkpoint 做测试：
+
+```bash
+python scripts/run_visdrone_baseline.py test \
+  --variant nano \
+  --dataset-dir data/visdrone_rfdetr \
+  --output-dir output/visdrone_nano \
+  --ckpt-path output/visdrone_nano/last.ckpt
 ```
 
 ### 关于 WanLab
